@@ -19,11 +19,26 @@ chrome.runtime.onInstalled.addListener(function() {
         ]);
     });
 
-    
-    // Create ContextMenu to add Show/Movie to queue
-    chrome.contextMenus.create({contexts: ["link"], title: "Add to Queue", onclick: function(){
-        alert("This worked")
-    }}, function() {
-        alert("Context Menu Created")
-    })
+    // Sync storage for Queue
+    chrome.storage.sync.set({queue:[], on:false}, function(){});
 });
+ // Add to queue
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (changeInfo.url) {
+        if (changeInfo.url.indexOf("netflix.com") != -1 && changeInfo.url.indexOf("/watch/") != -1) {
+            chrome.storage.sync.get('on', function(data) {
+                let toQueue = data.on;
+                if (toQueue) {
+                    chrome.storage.sync.get('queue', function(data) {
+                        var temp = data.queue;
+                        temp.push(changeInfo.url);
+                        chrome.storage.sync.set({queue:temp}, function(){});
+                    });
+                    chrome.tabs.goBack(tabId, function() {});
+                }
+            });
+        }
+    }
+});
+
+

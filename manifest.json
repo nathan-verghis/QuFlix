@@ -3,7 +3,7 @@
     "name": "QuFlix",
     "version": "0.1",
     "description": "Make a Queue of your next Netflix binge",
-    "permissions": ["declarativeContent", "contextMenus"],
+    "permissions": ["declarativeContent", "storage", "tabs"],
 
     "content_scripts": [
         {
